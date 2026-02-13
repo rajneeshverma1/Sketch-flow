@@ -1,0 +1,193 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// Load .env from root directory
+dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+
+import WebSocket, { WebSocketServer } from 'ws';
+import jwt, { type JwtPayload } from "jsonwebtoken"
+import { JWT_SECERET } from '@repo/backend-common/secret';
+import {pushMessage} from "@repo/redis/queue"
+import { redisPublisher } from '@repo/redis/client';
+
+const wss = new WebSocketServer({ port: 8080 });
+
+interface User {
+    ws: WebSocket
+    rooms: string[],
+    userId: string
+}
+
+const users: User[] = []
+
+
+
+function CheckUser (token: string) {
+    try {
+        const decoded = jwt.verify(token,JWT_SECERET) as JwtPayload;
+        if(!decoded){
+            return null;
+        }
+    
+        return decoded.userId
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+wss.on('connection', function connection(ws,request) {
+
+    console.log("New websocket connection")
+
+    const url= request.url
+    if(!url){
+        return
+    }
+
+    const queryparams = new URLSearchParams(url.split('?')[1])
+    const token  = queryparams.get("token")
+
+    console.log(token)
+    if(!token){
+        ws.close();
+        return
+    }
+    
+    const UserId = CheckUser(token)
+    console.log("UserId:",UserId)
+    if(!UserId){
+        console.log("user Disconected")
+        ws.close()
+        return
+    }
+
+    users.push({
+        userId: UserId.toString(),
+        rooms: [],
+        ws
+    })
+
+    ws.on('error', console.error);
+
+    console.log("Websocket server connected")
+
+    ws.on('message', async function msg(data) {
+
+        const parsedData = JSON.parse(data as unknown as string);
+
+//         {
+//              type: "join_room",
+//              roomId: 1
+//          }
+        if(parsedData.type === "join_room"){
+            users.find((u) =>  u.ws === ws)?.rooms.push(parsedData.roomId)
+            ws.send(JSON.stringify({
+                type: "system",
+                message: "User joined room"
+            }));
+        }
+
+        if (parsedData.type === "leave_room") {
+            const user = users.find(u => u.ws === ws)
+            if (!user) return
+
+            user.rooms = user.rooms.filter(
+                roomId => roomId !== parsedData.roomId
+            )
+        }
+
+
+        // {
+        //     "type": "chat",
+        //     "roomId": 1,
+        //     "message": "Hello everyone"
+        // }
+        if(parsedData.type === "chat"){
+            try {
+                console.log("chat recieved")
+            const roomId  = parsedData.roomId
+            const message = parsedData.message
+
+            //queu implementetion
+           const payload = {
+                message,
+                roomId,
+                userId: UserId
+            };
+            users.forEach((u) => {
+                if(u.rooms.includes(roomId) && u.ws != ws){
+                    u.ws.send(JSON.stringify({
+                        type: "chat",
+                        roomId: Number(roomId),
+                        message,
+                    }))
+                    // u.ws.send(message)
+                }
+            })
+
+            // pushMessage(payload);
+            } catch (error) {
+                console.log("chat:",error)
+            }
+        }
+
+        
+        if (parsedData.type === "canvas_cleared") {
+            const roomId = parsedData.canvasId;
+
+            users.forEach((u) => {
+                if (u.rooms.includes(roomId) && u.ws !== ws) {
+                    u.ws.send(JSON.stringify({
+                        type: "canvas_cleared",
+                        canvasId: roomId,
+                    }));
+                }
+            });
+
+            return;
+        }
+
+        if(parsedData.type === "shapes"){
+            try {
+            console.log("Shape recieved")
+            const roomId  = parsedData.roomId
+            const shape = parsedData.message
+            const message = JSON.parse(parsedData.message)
+
+            if (!message.shape) {
+                console.log("❌ Skipping null shape update");
+                return;
+            }
+
+            //queu implementetion
+           const payload = {
+                type: "shapes",
+                action: message.action, 
+                shape,
+                roomId,
+                userId: UserId
+            };
+            console.log(payload)
+            users.forEach((u) => {
+                if(u.rooms.includes(roomId) && u.ws != ws){
+                    u.ws.send(JSON.stringify({
+                        type: "shapes",
+                        roomId: Number(roomId),
+                        message: shape,
+                    }))
+                    // u.ws.send(message)
+                }
+            })
+            pushMessage(payload);
+            } catch (error) {
+                console.log("shapes:",error)
+            }
+        }
+        
+        
+
+        ws.send(data.toString());
+
+    });
+});
