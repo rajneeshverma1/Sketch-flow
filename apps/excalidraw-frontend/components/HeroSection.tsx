@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import useModalStore from "@/store/modal-store";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -34,131 +34,80 @@ const HeroSection = ({
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(174,72%,56%,0.15), transparent)' }}>
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[hsl(174,72%,56%)]/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[hsl(270,60%,65%)]/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-      </div>
-
-      <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[hsl(222,47%,20%)]/50 border border-[hsl(222,47%,25%)] mb-8 animate-fade-in">
-            <Sparkles className="h-4 w-4 text-[hsl(174,72%,56%)]" />
-            <span className="text-sm text-[hsl(215,20%,65%)]">
-              Free & Open Source Whiteboard
-            </span>
-          </div>
-
-          {/* Headline */}
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-24 pb-32 bg-[#EAF4FF]">
+      
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Hero Content - Center Aligned */}
+        <div className="max-w-5xl mx-auto text-center">
+          
+          {/* Main Headline */}
           <h1 
-            className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in text-[hsl(210,40%,98%)]"
-            style={{ animationDelay: '0.1s' }}
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-[1.15] text-gray-900 tracking-tight"
           >
-            Sketch your ideas
-            <br />
-            <span className="bg-gradient-to-r from-[hsl(174,72%,56%)] via-cyan-400 to-[hsl(270,60%,65%)] bg-clip-text text-transparent">beautifully</span>
+            All-in-One Digital Banking for Community Financial Institutions
           </h1>
 
           {/* Subheadline */}
           <p 
-            className="text-xl md:text-2xl text-[hsl(215,20%,65%)] mb-10 max-w-2xl mx-auto animate-fade-in"
-            style={{ animationDelay: '0.2s' }}
+            className="text-base sm:text-lg lg:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed opacity-90"
           >
-            A virtual whiteboard for sketching hand-drawn like diagrams. 
-            Collaborate with your team in real-time.
+            Your community connection is what sets you apart. Bankjoy&apos;s secure, innovative platform helps you amplify it and win in the digital world
           </p>
 
           {/* CTA Buttons */}
           <div 
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in"
-            style={{ animationDelay: '0.3s' }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
           >
-            <Button onClick={handleStartDrawing} variant="hero" size="xl">
-              Start Drawing
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button 
+              onClick={handleStartDrawing} 
+              className="group relative bg-gradient-to-r from-[hsl(174,72%,56%)] to-cyan-500 hover:from-[hsl(174,72%,60%)] hover:to-cyan-400 text-white font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-[hsl(174,72%,56%)]/25 hover:shadow-xl hover:shadow-[hsl(174,72%,56%)]/35 transition-all duration-300 hover:-translate-y-0.5"
+              size="xl"
+            >
+              Start Drawing Free
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             {token && (
-              <Button onClick={() => router.push("/dashboard")} variant="hero-outline" size="xl">
-                Dashboard
+              <Button 
+                onClick={() => router.push("/dashboard")} 
+                className="group border-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-semibold px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:border-gray-400 shadow-md hover:shadow-lg"
+                size="xl"
+              >
+                Go to Dashboard
+              </Button>
+            )}
+            {!token && (
+              <Button 
+                onClick={() => router.push("/auth/sign-in")} 
+                className="group border-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-semibold px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:border-gray-400 shadow-md hover:shadow-lg"
+                size="xl"
+              >
+                <Play className="mr-2 h-5 w-5" />
+                Watch Demo
               </Button>
             )}
           </div>
 
-          {/* Stats */}
-          {/* <div 
-            className="flex flex-wrap items-center justify-center gap-8 mt-16 animate-fade-in"
-            style={{ animationDelay: '0.4s' }}
-          >
-            {[
-              { value: '10M+', label: 'Active Users' },
-              { value: '50M+', label: 'Drawings Created' },
-              { value: '4.9', label: 'User Rating' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-[hsl(210,40%,98%)]">{stat.value}</div>
-                <div className="text-sm text-[hsl(215,20%,65%)]">{stat.label}</div>
+          {/* White Rounded Section Below Buttons */}
+          <div className="mt-8 mx-auto max-w-6xl">
+            <div className="bg-white rounded-[30px] shadow-2xl shadow-gray-300/50 p-8 sm:p-12 lg:p-16 min-h-[300px] flex items-center justify-center">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[hsl(174,72%,56%)] to-cyan-500 rounded-2xl mb-6">
+                  <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                  Built for the Future
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                  Experience next-generation digital banking solutions designed specifically for community financial institutions
+                </p>
               </div>
-            ))}
-          </div> */}
-        </div>
-
-        {/* Preview Image */}
-        <div 
-          className="mt-20 max-w-5xl mx-auto animate-fade-in"
-          style={{ animationDelay: '0.5s' }}
-        >
-          <div className="relative rounded-2xl overflow-hidden border border-[hsl(222,47%,25%)]/50 bg-[hsl(222,47%,14%)]/50 backdrop-blur-sm shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,11%)]/80 to-transparent pointer-events-none z-10" />
-            <SketchPreview />
+            </div>
           </div>
+
         </div>
       </div>
     </section>
   );
 };
-
-const SketchPreview = () => (
-  <svg viewBox="0 0 800 400" className="w-full h-auto">
-    {/* Background grid */}
-    <defs>
-      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(222,47%,20%)" strokeWidth="0.5" />
-      </pattern>
-    </defs>
-    <rect width="800" height="400" fill="hsl(222,47%,11%)" />
-    <rect width="800" height="400" fill="url(#grid)" />
-    
-    {/* Sketchy elements */}
-    <g stroke="hsl(174,72%,56%)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-      {/* Rectangle */}
-      <path d="M 100 100 L 250 102 L 248 200 L 102 198 Z" opacity="0.8" />
-      {/* Arrow */}
-      <path d="M 260 150 L 350 150" />
-      <path d="M 340 140 L 355 150 L 340 160" />
-      {/* Circle */}
-      <ellipse cx="450" cy="150" rx="60" ry="55" opacity="0.8" />
-      {/* Another arrow */}
-      <path d="M 520 150 L 610 150" />
-      <path d="M 600 140 L 615 150 L 600 160" />
-      {/* Diamond */}
-      <path d="M 700 100 L 750 150 L 700 200 L 650 150 Z" opacity="0.8" />
-    </g>
-    
-    {/* Text placeholders */}
-    <g fill="hsl(215,20%,65%)" fontFamily="Inter" fontSize="14">
-      <text x="140" y="155">Start</text>
-      <text x="425" y="155">Process</text>
-      <text x="680" y="155">End</text>
-    </g>
-
-    {/* Decorative sketchy notes */}
-    <g stroke="hsl(270,60%,65%)" strokeWidth="1.5" fill="none" opacity="0.6">
-      <path d="M 150 280 L 350 282" strokeDasharray="5 5" />
-      <path d="M 450 280 L 650 278" strokeDasharray="5 5" />
-    </g>
-  </svg>
-);
 
 export default HeroSection;

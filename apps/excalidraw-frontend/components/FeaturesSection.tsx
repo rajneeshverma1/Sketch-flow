@@ -35,15 +35,22 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section className="py-24 relative">
-      <div className="container mx-auto px-4">
+    <section className="py-28 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[hsl(217,91%,60%)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[hsl(174,72%,56%)]/6 rounded-full blur-3xl" />
+      </div>
+      
+      <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-[hsl(210,40%,98%)]">
-            Everything you need to
-            <span className="bg-gradient-to-r from-[hsl(174,72%,56%)] via-cyan-400 to-[hsl(270,60%,65%)] bg-clip-text text-transparent"> sketch ideas</span>
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[hsl(210,40%,98%)] leading-tight">
+            Everything You Need to
+            <br />
+            Collaborate Visually
           </h2>
-          <p className="text-lg text-[hsl(215,20%,65%)] max-w-2xl mx-auto">
+          <p className="text-lg text-[hsl(215,20%,70%)] max-w-2xl mx-auto leading-relaxed">
             Powerful features wrapped in a simple, intuitive interface. 
             Start creating in seconds.
           </p>
@@ -54,19 +61,18 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group p-6 rounded-2xl border border-[hsl(222,47%,25%)]/50 hover:border-[hsl(174,72%,56%)]/30 transition-all duration-300 hover:shadow-lg hover:shadow-[hsl(174,72%,56%)]/5 animate-fade-in"
+              className="group relative p-8 rounded-2xl border border-[hsl(222,47%,25%)]/40 hover:border-[hsl(217,91%,60%)]/40 transition-all duration-300 hover:shadow-xl hover:shadow-[hsl(217,91%,60%)]/10"
               style={{ 
-                animationDelay: `${index * 0.1}s`,
-                background: 'linear-gradient(180deg, hsl(222,47%,16%) 0%, hsl(222,47%,12%) 100%)'
+                background: 'linear-gradient(135deg, hsl(222,47%,15%) 0%, hsl(222,47%,12%) 100%)'
               }}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(174,72%,56%)]/10 border border-[hsl(174,72%,56%)]/20 mb-4 group-hover:bg-[hsl(174,72%,56%)]/20 transition-colors">
-                <feature.icon className="h-6 w-6 text-[hsl(174,72%,56%)]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(217,91%,60%)]/10 border border-[hsl(217,91%,60%)]/20 mb-5 group-hover:bg-[hsl(217,91%,60%)]/15 group-hover:border-[hsl(217,91%,60%)]/30 transition-all duration-300">
+                <feature.icon className="h-6 w-6 text-[hsl(217,91%,70%)]" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-[hsl(210,40%,98%)]">
+              <h3 className="text-xl font-bold mb-3 text-[hsl(210,40%,98%)]">
                 {feature.title}
               </h3>
-              <p className="text-[hsl(215,20%,65%)] leading-relaxed">
+              <p className="text-[hsl(215,20%,70%)] leading-relaxed text-base">
                 {feature.description}
               </p>
             </div>

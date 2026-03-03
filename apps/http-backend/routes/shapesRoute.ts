@@ -200,7 +200,7 @@ export async function deleteAllShapesInCanvasRoute(req: Request, res: Response) 
 
     // Check if canvas exists and user has permission
     const canvasData = await db.query.canvas.findFirst({
-      where: (canvas, { eq }) => eq(canvas.id, canvasId)
+      where: (canvasTable, { eq }) => eq(canvasTable.id, canvasId)
     });
 
     if (!canvasData) {
@@ -210,10 +210,10 @@ export async function deleteAllShapesInCanvasRoute(req: Request, res: Response) 
     // Check if user is admin or member of the canvas
     const isAdmin = canvasData.adminId === userId;
     const isMember = await db.query.canvasUsers.findFirst({
-      where: (canvasUsers, { and, eq }) => 
+      where: (canvasUsersTable, { and, eq }) => 
         and(
-          eq(canvasUsers.canvasId, canvasId),
-          eq(canvasUsers.memberId, userId)
+          eq(canvasUsersTable.canvasId, canvasId),
+          eq(canvasUsersTable.memberId, userId)
         )
     });
 
@@ -227,14 +227,18 @@ export async function deleteAllShapesInCanvasRoute(req: Request, res: Response) 
       .where(eq(shapes.canvasId, canvasId))
       .returning({ id: shapes.id });
 
-    // Broadcast clear event to all connected clients via Redis
-    await redisPublisher.publish(
-      `canvas:${canvasId}`,
-      JSON.stringify({
-        type: "CLEAR_ALL",
-        userId,
-      })
-    );
+    // Broadcast clear event to all connected clients via Redis (non-blocking)
+    try {
+      await redisPublisher.publish(
+        `canvas:${canvasId}`,
+        JSON.stringify({
+          type: "CLEAR_ALL",
+          userId,
+        })
+      );
+    } catch (redisErr) {
+      console.warn("Redis broadcast failed (non-critical):", redisErr);
+    }
 
     return res.json({
       success: true,

@@ -22,39 +22,48 @@ const Navbar = ({
 
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[hsl(222,47%,25%)]/50 bg-[hsl(222,47%,11%)]/80 backdrop-blur-xl">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[hsl(222,47%,25%)]/20 bg-[hsl(222,47%,11%)]/95 backdrop-blur-xl">
+      <div className="container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(174,72%,56%)]/10 border border-[hsl(174,72%,56%)]/30 group-hover:bg-[hsl(174,72%,56%)]/20 transition-colors">
-            <Pencil className="h-5 w-5 text-[hsl(174,72%,56%)]" />
+        <a href="/" className="flex items-center gap-2.5 group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[hsl(217,91%,60%)]/20 to-[hsl(174,72%,56%)]/20 border border-[hsl(217,91%,60%)]/30 group-hover:border-[hsl(217,91%,60%)]/50 transition-all duration-300">
+            <Pencil className="h-5 w-5 text-[hsl(217,91%,60%)]" />
           </div>
-          <span className="text-xl font-semibold text-[hsl(210,40%,98%)]">
-            Sketch<span className="text-[hsl(174,72%,56%)]">Flow</span>
+          <span className="text-xl font-bold text-[hsl(210,40%,98%)]">
+            SketchFlow
           </span>
         </a>
 
-        {/* Navigation Links */}
-        {/* <div className="hidden md:flex items-center gap-1">
-          <Button variant="nav" size="sm">Features</Button>
-          <Button variant="nav" size="sm">Pricing</Button>
-          <Button variant="nav" size="sm">About</Button>
-        </div> */}
+        {/* Center Navigation Links */}
+        <div className="hidden lg:flex items-center gap-8">
+          <button className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] font-medium text-sm transition-colors duration-200">
+            Products
+          </button>
+          <button className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] font-medium text-sm transition-colors duration-200">
+            Resources
+          </button>
+          <button className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] font-medium text-sm transition-colors duration-200">
+            Company
+          </button>
+          <button className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] font-medium text-sm transition-colors duration-200">
+            Pricing
+          </button>
+        </div>
 
-        {/* Auth Buttons */}
+        {/* Right side - Auth Buttons */}
         {token ? (
           <div className="flex items-center gap-3">
-            <Button onClick={handleLogout} variant="ghost" size="sm" className="text-[hsl(215,20%,65%)] hover:text-[hsl(210,40%,98%)]">
+            <Button onClick={handleLogout} className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] hover:bg-[hsl(222,47%,18%)] font-medium transition-all duration-200" variant="ghost" size="sm">
               Log Out
             </Button>
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <Button onClick={() => router.push("/auth/sign-in")} variant="ghost" size="sm" className="text-[hsl(215,20%,65%)] hover:text-[hsl(210,40%,98%)]">
-              Log in
+            <Button onClick={() => router.push("/auth/sign-in")} className="text-[hsl(215,20%,75%)] hover:text-[hsl(210,40%,98%)] hover:bg-[hsl(222,47%,18%)] font-medium transition-all duration-200 px-5" variant="ghost" size="sm">
+              Login
             </Button>
-            <Button onClick={() => router.push("/auth/sign-up")} variant="nav-primary" size="sm">
-              Sign up free
+            <Button onClick={() => router.push("/auth/sign-up")} className="bg-[hsl(217,91%,60%)] hover:bg-[hsl(217,91%,65%)] text-white font-semibold px-6 rounded-full shadow-md hover:shadow-lg transition-all duration-200" size="sm">
+              Get Started
             </Button>
           </div>
         )}
