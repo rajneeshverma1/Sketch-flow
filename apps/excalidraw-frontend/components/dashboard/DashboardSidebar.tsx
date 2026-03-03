@@ -143,7 +143,7 @@ const DashboardSidebar = ({ isOpen, onClose, token, userId,name,count, yourBoard
         {/* User Profile */}
         <div className="p-4 border-t border-[hsl(222,47%,25%)]">
           <div className="flex items-center gap-3 cursor-pointer">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(270,60%,65%)] to-[hsl(174,72%,56%)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-[hsl(270,60%,65%)] to-[hsl(174,72%,56%)] flex items-center justify-center">
               <span className="text-[hsl(210,40%,98%)] font-semibold text-sm">{name.at(0)}</span>
             </div>
             <div className="flex-1">

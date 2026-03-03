@@ -1,8 +1,8 @@
 
 import { db } from "@repo/db/db";
-import { shapes } from "@repo/db/schema";
+import { shapes, canvas, canvasUsers } from "@repo/db/schema";
 import type { Request, Response } from "express";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import type { Shapes } from "@repo/common/types";
 import { redisPublisher } from "@repo/redis/client";
 
@@ -198,19 +198,51 @@ export async function deleteAllShapesInCanvasRoute(req: Request, res: Response) 
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
     if (!canvasId) return res.status(400).json({ error: "Canvas id is required" });
 
+    // Check if canvas exists and user has permission
+    const canvasData = await db.query.canvas.findFirst({
+      where: (canvas, { eq }) => eq(canvas.id, canvasId)
+    });
+
+    if (!canvasData) {
+      return res.status(404).json({ error: "Canvas not found" });
+    }
+
+    // Check if user is admin or member of the canvas
+    const isAdmin = canvasData.adminId === userId;
+    const isMember = await db.query.canvasUsers.findFirst({
+      where: (canvasUsers, { and, eq }) => 
+        and(
+          eq(canvasUsers.canvasId, canvasId),
+          eq(canvasUsers.memberId, userId)
+        )
+    });
+
+    if (!isAdmin && !isMember) {
+      return res.status(403).json({ error: "You don't have permission to clear this canvas" });
+    }
+
+    // Delete ALL shapes in the canvas (not just user's shapes)
     const deleted = await db
       .delete(shapes)
-      .where(and(eq(shapes.canvasId, canvasId), eq(shapes.userId, userId)))
+      .where(eq(shapes.canvasId, canvasId))
       .returning({ id: shapes.id });
 
-    if (deleted.length === 0) return res.status(404).json({ error: "Shape not found" });
+    // Broadcast clear event to all connected clients via Redis
+    await redisPublisher.publish(
+      `canvas:${canvasId}`,
+      JSON.stringify({
+        type: "CLEAR_ALL",
+        userId,
+      })
+    );
 
     return res.json({
       success: true,
-      deletedId: deleted[0]!.id,
+      deletedCount: deleted.length,
+      message: `Cleared ${deleted.length} shape(s) from canvas`,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to delete shape" });
+    console.error("Error clearing canvas:", err);
+    return res.status(500).json({ error: "Failed to clear canvas" });
   }
 }

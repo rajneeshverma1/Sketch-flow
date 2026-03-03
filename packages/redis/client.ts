@@ -14,25 +14,48 @@ console.log("🔧 Redis Configuration:", {
     port: REDIS_URL ? '[from URL]' : REDIS_PORT,
 });
 
+// Common options for Redis connection
+const redisOptions = {
+    lazyConnect: true,
+    retryStrategy: (times: number) => {
+        if (times > 10) {
+            console.warn('⚠️  Redis connection failed after 10 retries, giving up');
+            return null; // Stop retrying
+        }
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+    },
+    maxRetriesPerRequest: 3,
+    enableOfflineQueue: true,
+    showFriendlyErrorStack: true,
+};
+
 // Use REDIS_DB_URL if available (cloud Redis), otherwise fall back to local config
-const redisConfig = REDIS_URL 
-    ? REDIS_URL 
-    : {
+export const redisPublisher = REDIS_URL 
+    ? new Redis(REDIS_URL, redisOptions)
+    : new Redis({
         host: REDIS_HOST,
         port: REDIS_PORT,
         password: REDIS_PASSWORD,
-    };
+        ...redisOptions,
+    });
 
-export const redisPublisher = new Redis(redisConfig);
-export const redisConsumer = new Redis(redisConfig);
+export const redisConsumer = REDIS_URL 
+    ? new Redis(REDIS_URL, redisOptions)
+    : new Redis({
+        host: REDIS_HOST,
+        port: REDIS_PORT,
+        password: REDIS_PASSWORD,
+        ...redisOptions,
+    });
 
 // Handle connection errors gracefully
 redisPublisher.on('error', (err) => {
-    console.warn('⚠️  Redis Publisher connection error (app will continue):', err.message);
+    console.warn('⚠️  Redis Publisher error:', err.message);
 });
 
 redisConsumer.on('error', (err) => {
-    console.warn('⚠️  Redis Consumer connection error (app will continue):', err.message);
+    console.warn('⚠️  Redis Consumer error:', err.message);
 });
 
 redisPublisher.on('connect', () => {

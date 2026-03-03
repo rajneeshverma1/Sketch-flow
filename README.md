@@ -1,135 +1,239 @@
-# Turborepo starter
+# 🎨 Sketch Flow
 
-This Turborepo starter is maintained by the Turborepo core team.
+A real-time collaborative whiteboard application built with Next.js, WebSockets, and Bun. Create, share, and collaborate on drawings with team members in real-time.
 
-## Using this example
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Bun](https://img.shields.io/badge/Bun-v1.3.5-ff69b4)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
 
-Run the following command:
+## ✨ Features
 
-```sh
-npx create-turbo@latest
+- 🎨 **Real-time Collaboration** - Draw together with multiple users simultaneously
+- 🔐 **User Authentication** - Secure JWT-based authentication
+- 🏠 **Room Management** - Create and join collaborative rooms
+- 💬 **Real-time Chat** - Communicate with team members
+- 📱 **Responsive Design** - Works seamlessly across devices
+- 🎯 **Shape Tools** - Various drawing tools and shapes
+- 💾 **Auto-save** - Automatic canvas state persistence
+- ⚡ **Fast Performance** - Built with Bun for optimal speed
+
+## 🏗️ Architecture
+
+This is a Turborepo monorepo with the following structure:
+
+### Apps
+
+- **excalidraw-frontend** - Next.js 16 frontend with Turbopack (Port 3000)
+- **http-backend** - Express REST API with Bun (Port 3001)
+- **ws-backend** - WebSocket server for real-time communication (Port 8080)
+- **worker** - Background job processor for async tasks
+
+### Packages
+
+- **@repo/db** - Drizzle ORM with PostgreSQL schemas
+- **@repo/redis** - Redis client configuration for pub/sub
+- **@repo/common** - Shared types and utilities
+- **@repo/backend-common** - Backend shared code
+- **@repo/ui** - Shared React components
+- **@repo/eslint-config** - ESLint configurations
+- **@repo/typescript-config** - TypeScript configurations
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Next.js 16, React 19, TailwindCSS, Zustand, Framer Motion
+- **Backend:** Bun, Express, WebSocket (ws)
+- **Database:** PostgreSQL with Drizzle ORM
+- **Cache/Queue:** Redis (ioredis)
+- **Auth:** JWT (jsonwebtoken)
+- **Monorepo:** Turborepo
+- **Package Manager:** Bun
+
+All apps and packages are 100% [TypeScript](https://www.typescriptlang.org/).
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- [Bun](https://bun.sh) v1.3.5+
+- [Node.js](https://nodejs.org) v18+
+- PostgreSQL database
+- Redis instance
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/rajneeshverma1/Sketch-flow.git
+   cd Sketch-flow
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   bun install
+   ```
+
+3. **Setup environment variables:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` with your configuration:
+
+   ```env
+   DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
+   JWT_SECRET=your_64_byte_random_string
+   PLAIN_TEXT_SECRET=your_64_byte_random_string
+   REDIS_DB_URL=redis://username:password@host:port
+   ```
+
+4. **Run database migrations:**
+
+   ```bash
+   cd packages/db
+   bun run push
+   cd ../..
+   ```
+
+5. **Start development servers:**
+   ```bash
+   bun run dev
+   ```
+
+The application will be available at:
+
+- Frontend: http://localhost:3000
+- HTTP Backend: http://localhost:3001
+- WebSocket Backend: ws://localhost:8080
+
+## 📦 Available Commands
+
+```bash
+# Development
+bun run dev          # Start all services in development mode
+bun run lint         # Lint all packages
+bun run format       # Format code with Prettier
+
+# Production
+bun run build        # Build all packages and apps
+bun run start        # Start all services in production mode
+
+# Specific apps
+cd apps/excalidraw-frontend
+bun run dev          # Start only frontend
+
+# Database operations
+cd packages/db
+bun run push         # Push schema changes to database
+bun run studio       # Open Drizzle Studio
+bun run generate     # Generate migrations
 ```
 
-## What's inside?
+## 🌐 Deployment
 
-This Turborepo includes the following packages/apps:
+We provide comprehensive deployment guides for multiple platforms:
 
-### Apps and Packages
+### 📖 Documentation
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **[📚 Full Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete guide covering all deployment options
+- **[⚡ Quick Deploy Reference](./QUICK_DEPLOY.md)** - Quick reference for common deployment tasks
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### 🔧 Deployment Scripts
 
-### Utilities
+**Windows PowerShell:**
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy.ps1
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+**Linux/Mac:**
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+```bash
+chmod +x deploy.sh
+./deploy.sh
 ```
 
-### Develop
+### 🎯 Recommended Platforms
 
-To develop all apps and packages, run the following command:
+| Platform                                 | Use Case         | Free Tier |
+| ---------------------------------------- | ---------------- | --------- |
+| [Vercel](https://vercel.com)             | Frontend         | ✅ Yes    |
+| [Railway](https://railway.app)           | Backend Services | ✅ Yes    |
+| [Neon](https://neon.tech)                | PostgreSQL       | ✅ Yes    |
+| [Upstash](https://upstash.com)           | Redis            | ✅ Yes    |
+| [DigitalOcean](https://digitalocean.com) | VPS              | ❌ $4/mo  |
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 📁 Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+sketch-flow/
+├── apps/
+│   ├── excalidraw-frontend/    # Next.js frontend
+│   │   ├── app/                # Next.js app directory
+│   │   ├── components/         # React components
+│   │   ├── hooks/              # Custom hooks
+│   │   └── store/              # Zustand stores
+│   ├── http-backend/           # REST API
+│   │   ├── routes/             # API routes
+│   │   └── middleware/         # Express middleware
+│   ├── ws-backend/             # WebSocket server
+│   └── worker/                 # Background jobs
+├── packages/
+│   ├── db/                     # Database schemas
+│   ├── redis/                  # Redis configuration
+│   ├── common/                 # Shared utilities
+│   ├── backend-common/         # Backend utilities
+│   ├── ui/                     # UI components
+│   ├── eslint-config/          # ESLint configs
+│   └── typescript-config/      # TypeScript configs
+├── .env.example                # Environment template
+├── deploy.sh                   # Linux deployment script
+├── deploy.ps1                  # Windows deployment script
+├── DEPLOYMENT_GUIDE.md         # Full deployment guide
+├── QUICK_DEPLOY.md             # Quick reference
+└── turbo.json                  # Turborepo configuration
 ```
 
-### Remote Caching
+## 🔐 Environment Variables
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+| Variable            | Description                   | Required |
+| ------------------- | ----------------------------- | -------- |
+| `DATABASE_URL`      | PostgreSQL connection string  | ✅       |
+| `JWT_SECRET`        | Secret for JWT token signing  | ✅       |
+| `PLAIN_TEXT_SECRET` | Additional encryption secret  | ✅       |
+| `REDIS_DB_URL`      | Redis connection URL          | ✅       |
+| `REDIS_HOST`        | Redis host (if not using URL) | ⚠️       |
+| `REDIS_PORT`        | Redis port (if not using URL) | ⚠️       |
+| `REDIS_PASSWORD`    | Redis password                | ⚠️       |
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## 🤝 Contributing
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```
-cd my-turborepo
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+## 📝 License
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+This project is licensed under the MIT License.
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 👤 Author
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+**Rajneesh Verma**
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+- GitHub: [@rajneeshverma1](https://github.com/rajneeshverma1)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+## 🙏 Acknowledgments
 
-## Useful Links
+- Built with [Turborepo](https://turborepo.com)
+- UI components from [shadcn/ui](https://ui.shadcn.com)
+- Icons from [Lucide](https://lucide.dev)
 
-Learn more about the power of Turborepo:
+---
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)

@@ -62,10 +62,10 @@ app.get("/canvas/:id",middleware,getCanvasByIdRoute)
 
 //shapes routes
 app.post("/shapes",middleware,createShapesRoute)
+app.delete("/shapes/deleteAll/:id",middleware,deleteAllShapesInCanvasRoute)
 app.get("/shapes/:id",middleware,getAllShapesInCanvasRoute)
 app.delete("/shapes/:id",middleware,deleteShapesByIdRoute)
 app.put("/shapes/:id",middleware,moveShapeByIdRoute)
-app.delete("/shapes/deleteAll/:id",middleware,deleteAllShapesInCanvasRoute)
 
 
 app.listen(port, () => {
